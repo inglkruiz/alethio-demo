@@ -1,23 +1,23 @@
 {
   "version": 1,
   "projects": {
-    "frontend": {
-      "root": "apps/frontend",
-      "sourceRoot": "apps/frontend/src",
+    "tracker": {
+      "root": "apps/tracker",
+      "sourceRoot": "apps/tracker/src",
       "projectType": "application",
       "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/web:build",
           "options": {
-            "outputPath": "dist/apps/frontend",
-            "index": "apps/frontend/src/index.html",
-            "main": "apps/frontend/src/main.tsx",
-            "polyfills": "apps/frontend/src/polyfills.ts",
-            "tsConfig": "apps/frontend/tsconfig.app.json",
+            "outputPath": "dist/apps/tracker",
+            "index": "apps/tracker/src/index.html",
+            "main": "apps/tracker/src/main.tsx",
+            "polyfills": "apps/tracker/src/polyfills.ts",
+            "tsConfig": "apps/tracker/tsconfig.app.json",
             "assets": [
-              "apps/frontend/src/favicon.ico",
-              "apps/frontend/src/assets"
+              "apps/tracker/src/favicon.ico",
+              "apps/tracker/src/assets"
             ],
             "styles": [],
             "scripts": [],
@@ -27,8 +27,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/frontend/src/environments/environment.ts",
-                  "with": "apps/frontend/src/environments/environment.prod.ts"
+                  "replace": "apps/tracker/src/environments/environment.ts",
+                  "with": "apps/tracker/src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -51,51 +51,115 @@
         "serve": {
           "builder": "@nrwl/web:dev-server",
           "options": {
-            "buildTarget": "frontend:build"
+            "buildTarget": "tracker:build",
+            "proxyConfig": "apps/tracker/proxy.conf.json"
           },
           "configurations": {
             "production": {
-              "buildTarget": "frontend:build:production"
+              "buildTarget": "tracker:build:production"
             }
+          }
+        },
+        "serveWithApi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "nx run api:serve"
+              },
+              {
+                "command": "nx run tracker:serve"
+              }
+            ]
           }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/frontend/**/*.{ts,tsx,js,jsx}"]
+            "lintFilePatterns": ["apps/tracker/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/frontend/jest.config.js",
+            "jestConfig": "apps/tracker/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "frontend-e2e": {
-      "root": "apps/frontend-e2e",
-      "sourceRoot": "apps/frontend-e2e/src",
+    "tracker-e2e": {
+      "root": "apps/tracker-e2e",
+      "sourceRoot": "apps/tracker-e2e/src",
       "projectType": "application",
       "architect": {
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/frontend-e2e/cypress.json",
-            "tsConfig": "apps/frontend-e2e/tsconfig.e2e.json",
-            "devServerTarget": "frontend:serve"
+            "cypressConfig": "apps/tracker-e2e/cypress.json",
+            "tsConfig": "apps/tracker-e2e/tsconfig.e2e.json",
+            "devServerTarget": "tracker:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "frontend:serve:production"
+              "devServerTarget": "tracker:serve:production"
             }
           }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/frontend-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": ["apps/tracker-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    },
+    "api": {
+      "root": "apps/api",
+      "sourceRoot": "apps/api/src",
+      "projectType": "application",
+      "prefix": "api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/api",
+            "main": "apps/api/src/main.ts",
+            "tsConfig": "apps/api/tsconfig.app.json",
+            "assets": ["apps/api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/api/src/environments/environment.ts",
+                  "with": "apps/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/api/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/api/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -120,5 +184,5 @@
       }
     }
   },
-  "defaultProject": "frontend"
+  "defaultProject": "tracker"
 }

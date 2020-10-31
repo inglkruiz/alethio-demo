@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import App from './app';
@@ -13,6 +14,6 @@ describe('App', () => {
   it('should have a greeting as the title', () => {
     const { getByText } = render(<App />);
 
-    expect(getByText('Welcome to frontend!')).toBeTruthy();
+    expect(getByText('Welcome to tracker!')).toBeTruthy();
   });
 });
