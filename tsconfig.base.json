@@ -15,7 +15,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@alethio-demo/ts": ["libs/ts/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -7,7 +7,7 @@ export const App = () => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Typography variant="h1">Hello world!</Typography>
+      <Typography variant="h1">Welcome to tracker!</Typography>
     </React.Fragment>
   );
 };
