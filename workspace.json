@@ -17,7 +17,8 @@
             "tsConfig": "apps/tracker/tsconfig.app.json",
             "assets": [
               "apps/tracker/src/favicon.ico",
-              "apps/tracker/src/assets"
+              "apps/tracker/src/assets",
+              { "glob": "static.json", "input": "apps/tracker", "output": "./" }
             ],
             "styles": [],
             "scripts": [],
