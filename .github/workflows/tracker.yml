@@ -59,7 +59,7 @@ jobs:
           steps.cache-node-modules.outputs.cache-hit != 'true'
 
       - name: Build tracker app
-        run: yarn build tracker
+        run: yarn build tracker --prod
 
       - name: Remove .gitignore
         run: rm .gitignore
