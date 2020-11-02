@@ -32,7 +32,30 @@ jobs:
 
       - run: git fetch --no-tags --prune --depth=5 origin master
 
-      - uses: bahmutov/npm-install@v1
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache yarn cache
+        uses: actions/cache@v2
+        id: cache-yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node-version }}-nodemodules-
+      - run: yarn install --frozen-lockfile
+        if: |
+          steps.cache-yarn-cache.outputs.cache-hit != 'true' ||
+          steps.cache-node-modules.outputs.cache-hit != 'true'
 
       - name: Build API
         run: yarn build api --prod
@@ -49,5 +72,5 @@ jobs:
       - name: Add api remote origin
         run: git remote add alethio-demo-api https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_API_APP_NAME }}.git
 
-      - name: Deploy frontend to Heroku
+      - name: Deploy API to Heroku
         run: git push alethio-demo-api api:refs/heads/master --force
