@@ -138,6 +138,11 @@
                 "glob": "package.json",
                 "input": "deploy/api",
                 "output": "./"
+              },
+              {
+                "glob": "yarn.lock",
+                "input": "./",
+                "output": "./"
               }
             ]
           },

@@ -8,6 +8,7 @@ on:
       - "apps/api/**"
       - "libs/**"
       - ".github/workflows/api.yml"
+      - "deploy/api/**"
 
 jobs:
   deploy:

@@ -8,6 +8,7 @@ on:
       - "apps/tracker/**"
       - "libs/**"
       - ".github/workflows/tracker.yml"
+      - "deploy/tracker/**"
 
 jobs:
   deploy:
