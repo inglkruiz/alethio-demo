@@ -1,13 +1,13 @@
-name: Deploy Tracker to Heroku
+name: Deploy API to Heroku
 
 on:
   push:
     branches:
       - master
     paths:
-      - "apps/tracker/**"
+      - "apps/api/**"
       - "libs/**"
-      - ".github/workflows/tracker.yml"
+      - ".github/workflows/api.yml"
 
 jobs:
   deploy:
@@ -34,20 +34,20 @@ jobs:
 
       - uses: bahmutov/npm-install@v1
 
-      - name: Build tracker app
-        run: yarn build tracker --prod
+      - name: Build API
+        run: yarn build api --prod
 
       - name: Remove .gitignore
         run: rm .gitignore
 
-      - name: Create a branch from tracker dist
-        run: git add ./dist/apps/tracker && git commit -m "Build tracker app" && git subtree split --prefix dist/apps/tracker -b tracker
+      - name: Create a branch from api dist
+        run: git add ./dist/apps/api && git commit -m "Build API" && git subtree split --prefix dist/apps/api -b api
 
-      - name: Switch to tracker branch
-        run: git checkout tracker
+      - name: Switch to api branch
+        run: git checkout api
 
-      - name: Add tracker remote origin
-        run: git remote add alethio-demo-tracker https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_TRACKER_APP_NAME }}.git
+      - name: Add api remote origin
+        run: git remote add alethio-demo-api https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_API_APP_NAME }}.git
 
       - name: Deploy frontend to Heroku
-        run: git push alethio-demo-tracker tracker:refs/heads/master --force
+        run: git push alethio-demo-api api:refs/heads/master --force
