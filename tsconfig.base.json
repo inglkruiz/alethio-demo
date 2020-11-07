@@ -16,8 +16,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@alethio-demo/ts": ["libs/ts/src/index.ts"]
-    }
+      "@alethio-demo/ts": ["libs/ts/src/index.ts"],
+      "@alethio-demo/nest/firebase": ["libs/nest/firebase/src/index.ts"]
+    },
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules", "tmp"]
 }
