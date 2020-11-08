@@ -1,11 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
 
-import {
-    FirebaseAdmin, FirebaseDatabaseReference, InjectFirebaseAdmin,
-} from '@alethio-demo/nest/firebase';
+import { InjectFirebaseAdmin } from '@alethio-demo/nest/firebase';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import type {
+  FirebaseAdmin,
+  FirebaseDatabaseReference,
+} from '@alethio-demo/nest/firebase';
 @Injectable()
 export class AppService {
   private axios: AxiosInstance;

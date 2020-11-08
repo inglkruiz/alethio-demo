@@ -3,8 +3,12 @@ import * as firebaseAdmin from 'firebase-admin';
 import { ClassProvider, DynamicModule, Module, Provider } from '@nestjs/common';
 
 import { FIREBASE_MODULE, FIREBASE_TOKEN } from './firebase.constants';
-import {
-    FirebaseAdmin, FirebaseModuleAsyncOptions, FirebaseModuleOptions, FirebaseModuleOptionsFactory,
+
+import type {
+  FirebaseAdmin,
+  FirebaseModuleAsyncOptions,
+  FirebaseModuleOptions,
+  FirebaseModuleOptionsFactory,
 } from './firebase.interfaces';
 
 function getFirebaseAdmin(options: FirebaseModuleOptions): FirebaseAdmin {
