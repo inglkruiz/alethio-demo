@@ -38,6 +38,9 @@
     },
     "ts": {
       "tags": []
+    },
+    "nest-firebase": {
+      "tags": []
     }
   }
 }
