@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@alethio-demo/ts": ["libs/ts/src/index.ts"],
-      "@alethio-demo/nest/firebase": ["libs/nest/firebase/src/index.ts"]
+      "@alethio-demo/nest/firebase": ["libs/nest/firebase/src/index.ts"],
+      "@alethio-demo/nest/axios": ["libs/nest/axios/src/index.ts"]
     },
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true

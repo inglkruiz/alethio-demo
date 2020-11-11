@@ -1,8 +1,7 @@
-import axios, { AxiosInstance } from 'axios';
-
+import type { AxiosInstance } from '@alethio-demo/nest/axios';
+import { InjectAxiosInstance } from '@alethio-demo/nest/axios';
 import { InjectFirebaseAdmin } from '@alethio-demo/nest/firebase';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 import type {
   FirebaseAdmin,
@@ -10,20 +9,12 @@ import type {
 } from '@alethio-demo/nest/firebase';
 @Injectable()
 export class AppService {
-  private axios: AxiosInstance;
   private accountsDatabaseRef: FirebaseDatabaseReference;
 
   constructor(
-    config: ConfigService,
-    @InjectFirebaseAdmin() firebaseAdmin: FirebaseAdmin
+    @InjectAxiosInstance() private readonly axios: AxiosInstance,
+    @InjectFirebaseAdmin() readonly firebaseAdmin: FirebaseAdmin
   ) {
-    this.axios = axios.create({
-      baseURL: 'https://api.aleth.io/v1',
-      headers: {
-        Authorization: `Bearer ${config.get('ALETHIO_API_KEY')}`,
-      },
-    });
-
     this.accountsDatabaseRef = firebaseAdmin.database.ref('accounts');
   }
 
