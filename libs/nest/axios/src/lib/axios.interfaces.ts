@@ -1,6 +1,6 @@
 //#region Interfaces
 
-import { AxiosInstance as _AxiosInstance, AxiosRequestConfig } from 'axios';
+import { Rxios as _Rxios, RxiosConfig } from 'rxios';
 
 import { ModuleMetadata, Type } from '@nestjs/common';
 
@@ -12,8 +12,8 @@ export interface AxiosModuleOptionsFactory {
 
 //#region Types
 
-export type AxiosModuleOptions = AxiosRequestConfig;
-export type AxiosInstance = _AxiosInstance;
+export type AxiosModuleOptions = RxiosConfig;
+export type RxiosInstance = _Rxios;
 
 export type AxiosModuleAsyncOptions = {
   useClass?: Type<AxiosModuleOptionsFactory>;

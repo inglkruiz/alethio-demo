@@ -1,20 +1,20 @@
-import axios, { AxiosInstance } from 'axios';
+import { Rxios } from 'rxios';
 
 import { ClassProvider, DynamicModule, Module, Provider } from '@nestjs/common';
 
 import { AXIOS_MODULE, AXIOS_TOKEN } from './axios.constants';
 import {
-    AxiosModuleAsyncOptions, AxiosModuleOptions, AxiosModuleOptionsFactory,
+    AxiosModuleAsyncOptions, AxiosModuleOptions, AxiosModuleOptionsFactory, RxiosInstance,
 } from './axios.interfaces';
 
-function getAxiosInstance(options: AxiosModuleOptions): AxiosInstance {
-  return axios.create(options);
+function getAxiosInstance(options: AxiosModuleOptions): RxiosInstance {
+  return new Rxios(options);
 }
 
 @Module({})
 export class AxiosModule {
   public static forConfig(options: AxiosModuleOptions): DynamicModule {
-    const provider: Provider<AxiosInstance> = {
+    const provider: Provider<RxiosInstance> = {
       provide: AXIOS_TOKEN,
       useValue: getAxiosInstance(options),
     };
