@@ -41,6 +41,9 @@
     },
     "nest-firebase": {
       "tags": []
+    },
+    "nest-axios": {
+      "tags": []
     }
   }
 }

@@ -4,5 +4,6 @@ module.exports = {
     '<rootDir>/apps/api',
     '<rootDir>/libs/ts',
     '<rootDir>/libs/nest/firebase',
+    '<rootDir>/libs/nest/axios',
   ],
 };

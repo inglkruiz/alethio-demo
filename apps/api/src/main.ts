@@ -6,6 +6,7 @@
 import packageJson from 'package.json';
 
 import { INestApplication, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger/dist/document-builder';
 import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
@@ -14,6 +15,12 @@ import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const config = app.get(ConfigService);
+
+  app.enableCors({
+    origin: config.get('FRONTEND_APP_URL'),
+  });
 
   initializeSwagger(app);
 
