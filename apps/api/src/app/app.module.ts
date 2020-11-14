@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { environment } from '../environments/environment';
-import { AccountsService } from './accounts.service';
+import { AccountService } from './account.service';
 import { AppController } from './app.controller';
 
 @Module({
@@ -37,6 +37,6 @@ import { AppController } from './app.controller';
     }),
   ],
   controllers: [AppController],
-  providers: [AccountsService],
+  providers: [AccountService],
 })
 export class AppModule {}

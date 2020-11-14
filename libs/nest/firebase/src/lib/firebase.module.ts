@@ -9,7 +9,7 @@ import type {
   FirebaseModuleAsyncOptions,
   FirebaseModuleOptions,
   FirebaseModuleOptionsFactory,
-} from './firebase.interfaces';
+} from './firebase.types';
 
 function getFirebaseAdmin(options: FirebaseModuleOptions): FirebaseAdmin {
   const app = firebaseAdmin.initializeApp({

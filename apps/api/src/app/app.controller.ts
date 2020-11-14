@@ -1,12 +1,24 @@
 import Web3Utils from 'web3-utils';
 
-import { Controller, Get, HttpException, HttpStatus, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Put,
+} from '@nestjs/common';
 
-import { AccountsService } from './accounts.service';
+import { AccountService } from './account.service';
 
 @Controller('accounts')
 export class AppController {
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor(private readonly accountsService: AccountService) {}
+
+  @Get()
+  getAccounts() {
+    return this.accountsService.getList();
+  }
 
   @Get(':address')
   getAccountData(@Param('address') address: string) {
@@ -22,6 +34,11 @@ export class AppController {
       );
     }
 
-    return this.accountsService.getTransactions(address);
+    return this.accountsService.get(address);
+  }
+
+  @Put(':address/toggle-is-tracked')
+  toggleAccountIsTracked(@Param('address') address: string) {
+    return this.accountsService.toggleIsTracked(address);
   }
 }

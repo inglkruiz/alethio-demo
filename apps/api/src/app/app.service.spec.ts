@@ -1,16 +1,16 @@
 import { Test } from '@nestjs/testing';
 
-import { AppService } from './app.service';
+import { AccountService } from './account.service';
 
 describe.skip('AppService', () => {
-  let service: AppService;
+  let service: AccountService;
 
   beforeAll(async () => {
     const app = await Test.createTestingModule({
-      providers: [AppService],
+      providers: [AccountService],
     }).compile();
 
-    service = app.get<AppService>(AppService);
+    service = app.get<AccountService>(AccountService);
   });
 
   describe('getData', () => {

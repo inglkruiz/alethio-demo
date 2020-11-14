@@ -17,7 +17,8 @@
     "paths": {
       "@alethio-demo/ts": ["libs/ts/src/index.ts"],
       "@alethio-demo/nest/firebase": ["libs/nest/firebase/src/index.ts"],
-      "@alethio-demo/nest/axios": ["libs/nest/axios/src/index.ts"]
+      "@alethio-demo/nest/axios": ["libs/nest/axios/src/index.ts"],
+      "lodash/*": ["node_modules/@types/lodash-es/*"]
     },
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true

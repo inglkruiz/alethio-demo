@@ -4,8 +4,11 @@ import { ClassProvider, DynamicModule, Module, Provider } from '@nestjs/common';
 
 import { AXIOS_MODULE, AXIOS_TOKEN } from './axios.constants';
 import {
-    AxiosModuleAsyncOptions, AxiosModuleOptions, AxiosModuleOptionsFactory, RxiosInstance,
-} from './axios.interfaces';
+  AxiosModuleAsyncOptions,
+  AxiosModuleOptions,
+  AxiosModuleOptionsFactory,
+  RxiosInstance,
+} from './axios.types';
 
 function getAxiosInstance(options: AxiosModuleOptions): RxiosInstance {
   return new Rxios(options);
