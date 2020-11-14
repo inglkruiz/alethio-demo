@@ -91,9 +91,9 @@ export const TxnDataGrid = () => {
   const Grid = useCallback(() => {
     return (
       <DataGrid
+        hideFooter
         pagination
         rowHeight={36}
-        rowsPerPageOptions={[]}
         columns={columns}
         rows={transactionsData}
       />

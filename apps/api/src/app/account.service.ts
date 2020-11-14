@@ -4,9 +4,8 @@ import { listVal, objectVal } from 'rxfire/database';
 import { from, Observable, of } from 'rxjs';
 import { concatMapTo, first, map, mergeMap } from 'rxjs/operators';
 
-import { InjectAxiosInstance } from '@alethio-demo/nest/axios';
 import { InjectFirebaseAdmin } from '@alethio-demo/nest/firebase';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpService, HttpStatus, Injectable } from '@nestjs/common';
 
 import type {
   FirebaseAdmin,
@@ -23,7 +22,7 @@ export class AccountService {
   private accountsDatabaseRef: FirebaseDatabaseReference;
 
   constructor(
-    @InjectAxiosInstance() private readonly rxios: RxiosInstance,
+    private httpService: HttpService,
     @InjectFirebaseAdmin() readonly firebaseAdmin: FirebaseAdmin
   ) {
     this.accountsDatabaseRef = firebaseAdmin.database.ref('accounts');
@@ -63,14 +62,18 @@ export class AccountService {
   }
 
   private getAlethioTransactions(address: string) {
-    return this.rxios
+    return this.httpService
       .get<AlethioAccountTransactionsResponse>('transactions', {
-        'filter[account]': address,
-        'page[limit]': 25,
+        params: {
+          'filter[account]': address,
+          'page[limit]': 25,
+        },
       })
       .pipe(
         first(),
-        map((transactions) => {
+        map((axiosResponse) => {
+          const transactions = axiosResponse.data;
+
           if (transactions.errors) return { errors: transactions.errors };
 
           const data: Account = {

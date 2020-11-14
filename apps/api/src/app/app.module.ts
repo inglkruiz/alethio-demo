@@ -1,6 +1,5 @@
-import { AxiosModule } from '@alethio-demo/nest/axios';
 import { FirebaseModule } from '@alethio-demo/nest/firebase';
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { environment } from '../environments/environment';
@@ -12,7 +11,7 @@ import { AppController } from './app.controller';
     ConfigModule.forRoot({
       ignoreEnvFile: !environment.production,
     }),
-    AxiosModule.forConfigAsync({
+    HttpModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => {
         return {
