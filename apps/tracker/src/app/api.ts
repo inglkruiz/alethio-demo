@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-import { environment } from '../environments/environment';
-
 const http = axios.create({
-  baseURL: `${environment.api}`,
+  baseURL: '/api',
 });
 
 const basePath = '/accounts';

@@ -18,7 +18,7 @@ async function bootstrap() {
 
   const config = app.get(ConfigService);
 
-  app.enableCors({
+  app.setGlobalPrefix('api').enableCors({
     origin: config.get('FRONTEND_APP_URL'),
   });
 
