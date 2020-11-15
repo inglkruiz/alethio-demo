@@ -13,7 +13,7 @@ export const store = configureStore({
 // Init state
 store
   .dispatch(fetchList())
-  .then((response) => store.dispatch(setAccountId(response.payload?.[0].id)));
+  .then((response) => store.dispatch(setAccountId(response.payload?.[0]?.id)));
 
 export type RootState = ReturnType<typeof store.getState>;
 
