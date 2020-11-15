@@ -3,8 +3,10 @@ import { HttpModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { environment } from '../environments/environment';
+import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
-import { AppController } from './app.controller';
+import { WebhookController } from './webhook.controller';
+import { WebhookService } from './webhook.service';
 
 @Module({
   imports: [
@@ -35,7 +37,7 @@ import { AppController } from './app.controller';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController],
-  providers: [AccountService],
+  controllers: [AccountController, WebhookController],
+  providers: [AccountService, WebhookService],
 })
 export class AppModule {}

@@ -7,16 +7,16 @@ import {
 import { AccountService } from './account.service';
 
 @Controller('accounts')
-export class AppController {
-  constructor(private readonly accountsService: AccountService) {}
+export class AccountController {
+  constructor(private readonly accounts: AccountService) {}
 
   @Get()
-  getAccounts() {
-    return this.accountsService.getList();
+  getList() {
+    return this.accounts.getList();
   }
 
   @Get(':address')
-  getAccountData(@Param('address') address: string) {
+  getData(@Param('address') address: string) {
     if (!address) {
       throw new HttpException(
         "Account's address not found in request",
@@ -29,18 +29,18 @@ export class AppController {
       );
     }
 
-    return this.accountsService.get(address);
+    return this.accounts.get(address);
   }
 
-  @Post(':address')
+  @Post('webhook-handler')
   @HttpCode(200)
-  updateAccountData(@Param('address') address: string, @Body() data) {
+  handleWebhook(@Body() data) {
     console.dir(data);
     return;
   }
 
   @Put(':address/toggle-is-tracked')
-  toggleAccountIsTracked(@Param('address') address: string) {
-    return this.accountsService.toggleIsTracked(address);
+  toggleIsTracked(@Param('address') address: string) {
+    return this.accounts.toggleIsTracked(address);
   }
 }

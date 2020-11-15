@@ -1,15 +1,17 @@
+import _get from 'lodash/get';
 import _isNil from 'lodash/isNil';
 import _orderBy from 'lodash/orderBy';
 import _pick from 'lodash/pick';
 import { listVal, objectVal } from 'rxfire/database';
 import { from, Observable, of } from 'rxjs';
-import { concatMap, concatMapTo, exhaustMap, first, map, tap } from 'rxjs/operators';
+import { catchError, concatMap, concatMapTo, exhaustMap, first, map, tap } from 'rxjs/operators';
 
 import { InjectFirebaseAdmin } from '@alethio-demo/nest/firebase';
 import { HttpException, HttpService, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { environment } from '../environments/environment';
+import { WebhookService } from './webhook.service';
 
 import type {
   FirebaseAdmin,
@@ -22,19 +24,17 @@ import type {
   AlethioAccountTransaction,
 } from './account.types';
 import type { AlethioWebhookResponse } from './webhook.types';
-
 @Injectable()
 export class AccountService {
   private accountsDbRef: FirebaseDatabaseReference;
-  private webhooksDbRef: FirebaseDatabaseReference;
 
   constructor(
     private http: HttpService,
     @InjectFirebaseAdmin() readonly firebaseAdmin: FirebaseAdmin,
-    private config: ConfigService
+    private config: ConfigService,
+    private webhook: WebhookService
   ) {
     this.accountsDbRef = firebaseAdmin.database.ref('accounts');
-    this.webhooksDbRef = firebaseAdmin.database.ref('webhooks/accounts');
   }
 
   getList() {
@@ -67,20 +67,22 @@ export class AccountService {
 
         return this.updateDbIsTracked(dataFromDatabase).pipe(
           concatMap((account) =>
-            this.retrieveDbWebhook(account.id).pipe(
-              map((webhook) => ({ webhook, account }))
-            )
+            this.webhook
+              .retrieveDbWebhook(account.id)
+              .pipe(map((webhook) => ({ webhook, account })))
           ),
-          concatMap(({ webhook: webhookFromDB, account }) =>
-            _isNil(webhookFromDB?.data)
-              ? this.createAlethioWebhookOnTransaction(account)
-              : this.updateAlethioWebhookOnTransaction(
-                  webhookFromDB.data.id,
-                  account
-                )
-          ),
+          concatMap(({ webhook, account }) => {
+            const webhookId = _get(webhook, ['data', 'id']);
+
+            return _isNil(webhookId) && account.isTracked
+              ? this.createAlethioWebhookOnTransactions(account)
+              : this.updateAlethioWebhookOnTransactions(webhookId, account);
+          }),
           map(({ webhook, account }) => {
-            this.saveDbWebhook(account.id, webhook);
+            if (environment.production) {
+              this.webhook.saveDbWebhook(account.id, webhook);
+            }
+
             return { data: account };
           })
         );
@@ -143,7 +145,7 @@ export class AccountService {
       );
   }
 
-  private createAlethioWebhookOnTransaction(account: Pick<Account, 'id'>) {
+  private createAlethioWebhookOnTransactions(account: Pick<Account, 'id'>) {
     if (!environment.production)
       return of({ webhook: null as AlethioWebhookResponse, account });
 
@@ -157,12 +159,11 @@ export class AccountService {
               source: 'api',
               target: `https://${this.config.get(
                 'APP_NAME'
-              )}.herokuapp.com/api/account/${account.id}`,
+              )}.herokuapp.com/api/accounts/webhook-handler`,
               config: {
-                endpoint: 'https://api.aleth.io/v1/transactions',
+                endpoint: '/transactions',
                 filters: {
-                  'filter[account]': account.id,
-                  'page[limit]': 25,
+                  account: account.id,
                 },
                 confirmations: 1,
               },
@@ -171,18 +172,22 @@ export class AccountService {
         },
         {
           headers: {
-            'Content-Type': 'application/vnd.api+json',
+            'Content-type': 'application/vnd.api+json',
           },
         }
       )
       .pipe(
         first(),
-        tap((response) => console.log(`Webhook created: %O`, response.data)),
-        map((response) => ({ webhook: response.data, account }))
+        tap((response) => console.log('Webhook create: %O', response.data)),
+        map((response) => ({ webhook: response.data, account })),
+        catchError((error) => {
+          console.error(error);
+          return of({ webhook: null, account });
+        })
       );
   }
 
-  private updateAlethioWebhookOnTransaction(
+  private updateAlethioWebhookOnTransactions(
     id: string,
     account: Pick<Account, 'id' | 'isTracked'>
   ) {
@@ -196,7 +201,11 @@ export class AccountService {
       .pipe(
         first(),
         tap((response) => console.log(`Webhook ${action}: %O`, response.data)),
-        map((response) => ({ webhook: response.data, account }))
+        map((response) => ({ webhook: response.data, account })),
+        catchError((error) => {
+          console.error(error);
+          return of({ webhook: null, account });
+        })
       );
   }
 
@@ -216,12 +225,6 @@ export class AccountService {
     );
   }
 
-  private retrieveDbWebhook(address: string) {
-    return objectVal<AlethioWebhookResponse>(
-      this.webhooksDbRef.child(address)
-    ).pipe(first());
-  }
-
   private retrieveDbObject(address: string): Observable<Account> {
     return objectVal<Account>(this.accountsDbRef.child(address)).pipe(first());
   }
@@ -235,9 +238,5 @@ export class AccountService {
 
   private saveDbObject(address: string, data: Account) {
     this.accountsDbRef.child(address).set(data);
-  }
-
-  private saveDbWebhook(address: string, data: any) {
-    this.webhooksDbRef.child(address).set(data);
   }
 }

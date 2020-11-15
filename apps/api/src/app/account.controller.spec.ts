@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AppController } from './app.controller';
+import { AccountController } from './account.controller';
 
 describe.skip('AppController', () => {
   let app: TestingModule;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      controllers: [AppController],
+      controllers: [AccountController],
       providers: [],
     }).compile();
   });
