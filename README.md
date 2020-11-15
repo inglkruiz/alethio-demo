@@ -1,90 +1,109 @@
 # AlethioDemo
 
-This project was generated using [Nx](https://nx.dev).
+This repository has been scaffolded using [Nrwl Nx](https://nx.dev). It is a monorepo that holds the source code of a Web application and its backend application (aka API).
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+## Dependency management
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+### Installing dependencies
 
-## Adding capabilities to your workspace
+The project uses [yarn](https://yarnpkg.com) as dependency manager. Once you have installed `yarn`, you can install the dependencies of this repository by running the following command:
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+```bash
+yarn
+```
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+### Bundling dependencies
 
-Below are our core plugins:
+This repository only contains one single [package.json](./package.json) file that lists the dependencies of all its frontend and backend applications. When a frontend application is built, its external dependencies (aka Node modules) are bundled in the resulting artifact. However, it is not the case for a backend application (for various valid reasons). It is well known that installing all the production dependencies would dramatically increase the size of the artifact. Instead, we need to extract the dependencies which are actually used by the backend application. More information about this problem can be found in [this GitHub issue](https://github.com/nrwl/nx/issues/1518). For now, a copy of package json dependencies is kept for deployment. If you install a dependency please update [deploy/api/package.json](./deploy/api/package.json) file. Theres a a way to fix this issue but requires time and testing.
 
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
+## High-level architecture
 
-There are also many [community plugins](https://nx.dev/nx-community) you could add.
+Explained briefly...
 
-## Generate an application
+### Frontend
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+Tracker app, the frontend application is a SPA built with:
 
-> You can use any of the plugins above to generate applications as well.
+- [Typescript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html)
+- [React](https://reactjs.org/docs/getting-started.html)
+- [Redux toolkit](https://redux.js.org/introduction/getting-started#redux-toolkit) and [React-redux](https://react-redux.js.org/introduction/quick-start#quick-start) implementing [state slices](https://redux.js.org/tutorials/fundamentals/part-8-modern-redux#writing-slices)
+- [Material-ui for React](https://material-ui.com/getting-started/installation/)
+- [Web3-utils](https://web3js.readthedocs.io/en/v1.3.0/web3-utils.html)
+- [Numbro](https://numbrojs.com/getting-started.html)
+- [Date-fns](https://date-fns.org/docs/Getting-Started) (not used yet but it is the chosen option for date formatting)
+- [Lodash](https://lodash.com/)
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+It is deployed to [Heroku](https://www.heroku.com/home) using https://github.com/heroku/heroku-buildpack-static.git build pack, which is a Nginx.
 
-## Generate a library
+### Backend
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+The API, the backend application is driven by [Nest](https://docs.nestjs.com/) framework. It includes:
 
-> You can also use any of the plugins above to generate libraries as well.
+- [Typescript](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html)
+- [RxJs](https://rxjs-dev.firebaseapp.com/)
+- [Swagger-ui](https://swagger.io/tools/swagger-ui/)
 
-Libraries are sharable across libraries and applications. They can be imported from `@alethio-demo/mylib`.
+It also uses:
 
-## Development server
+- [Lodash](https://lodash.com/)
+- [Firebase admin](https://firebase.google.com/docs/admin/setup)
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+It is deployed to [Heroku](https://www.heroku.com/home) using https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-nodejs build pack.
 
-## Code scaffolding
+### Deployment
 
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
+In a nutshell the project is automated to run Continuos Integration and Delivery to [Heroku](https://www.heroku.com/home) using GitHub actions.
 
-## Build
+#### CI/CD
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+- GitHub Action [integrate](./.github/workflows/integrate.yml) executes on Pull requests to run Unit tests and test the production build task for the code in the PR branch.
+- GitHub Action [tracker](./.github/workflows/tracker.yml) executes when code is pushed to `master` branch to deploy the frontend application.
+- GitHub Action [api](./.github/workflows/api.yml) executes when code is pushed to `master` branch to deploy the backend application.
 
-## Running unit tests
+For this to work you will need to configure the following GitHub Secrets in your repository:
 
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+- `HEROKU_API_TOKEN` | https://devcenter.heroku.com/articles/authentication#retrieving-the-api-token
+- `HEROKU_API_APP_NAME` | Your heroku repository name for the API. You can find it in your heroku app (Dyno) > Settings > as part of the property `Heroku git URL`
+- `HEROKU_TRACKER_APP_NAME` | Your heroku repository name for the frontend application. You can find it in your heroku app (Dyno) > Settings > as part of the property `Heroku git URL`
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+#### Default cloud provider
 
-## Running end-to-end tests
+As mentioned before [Heroku](https://www.heroku.com/home) is configured as the default cloud provider to host the project in two dynos.
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
+For this to work you will need to configure the following environment variables:
 
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
+**Backend application**
 
-## Understand your workspace
+- `ALETHIO_API_KEY` | The API uses [Alethio Blockchain API](https://aleth.io/) to get data from the Ethereum Network. You will need to register to get one.
+- `APP_NAME` | Simply your App Name for the Heroku backend. You can find it in your heroku app (Dyno) > Settings > property `App Name`.
+- `FRONTEND_APP_URL` | The frontend application url. i.e. `https://your-url.herokuapp.com`
 
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
+As a cache mechanism the API uses [Firebase](https://firebase.google.com/) to store Alethio API requests' responses. Therefore, the next three variables are needed to read and write to a Realtime database. You can generate a new private key using your Web Firebase console (it downloads a JSON file), and store the following values:
 
-## Further help
+- `client_email` as `FIREBASE_CLIENT_EMAIL`
+- `private_key` as `FIREBASE_PRIVATE_KEY`
+- `project_id` as `FIREBASE_PROJECT_ID`
 
-Visit the [Nx Documentation](https://nx.dev) to learn more.
+**Frontend application**
 
-## ☁ Nx Cloud
+- `API_APP_NAME` | Simply your App Name for the Heroku backend. You can find it in your heroku app (Dyno) > Settings > property `App Name`.
 
-### Computation Memoization in the Cloud
+## Local development
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
+After installing project dependencies you have two options:
 
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
+1. Run the frontend and backend applications with one single command from a terminal:
 
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
+```bash
+yarn nx run tracker:serveWithApi
+```
 
-Visit [Nx Cloud](https://nx.app/) to learn more.
+2. Run the frontend and backend applications on different terminals:
+
+```bash
+yarn start tracker
+```
+
+```bash
+yarn start api
+```
