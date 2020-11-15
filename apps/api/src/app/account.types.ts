@@ -3,8 +3,29 @@ interface AlethioResponse {
   errors: any;
 }
 
+export interface AlethioAccountTransaction {
+  id: string;
+  attributes: {
+    fee: string;
+    globalRank: number[];
+    value: string;
+  };
+  relationships: {
+    from: {
+      data: {
+        id: string;
+      };
+    };
+    to: {
+      data: {
+        id: string;
+      };
+    };
+  };
+}
+
 export interface AlethioAccountTransactionsResponse extends AlethioResponse {
-  data: [];
+  data: AlethioAccountTransaction[];
   links: {
     prev: string;
     next: string;
@@ -23,11 +44,17 @@ export interface Account {
   isTracked: boolean;
   queryDate: number;
   transactions: {
-    data: [];
-    links: any;
+    data: AlethioAccountTransaction[];
+    links: {
+      prev: string;
+      next: string;
+    };
     meta: {
       count: number;
-      page: any;
+      page: {
+        prev: boolean;
+        next: boolean;
+      };
     };
   };
 }

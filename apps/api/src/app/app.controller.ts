@@ -1,12 +1,7 @@
 import Web3Utils from 'web3-utils';
 
 import {
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  Put,
+    Body, Controller, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put,
 } from '@nestjs/common';
 
 import { AccountService } from './account.service';
@@ -35,6 +30,13 @@ export class AppController {
     }
 
     return this.accountsService.get(address);
+  }
+
+  @Post(':address')
+  @HttpCode(200)
+  updateAccountData(@Param('address') address: string, @Body() data) {
+    console.dir(data);
+    return;
   }
 
   @Put(':address/toggle-is-tracked')
